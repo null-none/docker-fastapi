@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.9-alpine
+FROM python:3.11-slim
 
 # set work directory
 WORKDIR /src
@@ -13,10 +13,11 @@ COPY ./requirements.txt /src/requirements.txt
 
 # install dependencies
 RUN set -eux \
-    && apk add --no-cache --virtual .build-deps build-base \
-    gcc musl-dev python3-dev postgresql-dev \
+    && apt -y update \
+    && apt -y upgrade \
+    && apt install -y ffmpeg libssl-dev \
     && pip install --upgrade pip setuptools wheel \
-    && pip install -r /src/requirements.txt \
+    && pip install --prefer-binary --no-cache-dir --upgrade -r /src/requirements.txt \
     && rm -rf /root/.cache/pip
 
 # copy project
